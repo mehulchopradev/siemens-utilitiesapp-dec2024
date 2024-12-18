@@ -9,4 +9,12 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+
+  button {
+    @apply border disabled:bg-gray-400 text-white bg-blue-800 p-2 rounded;
+  }
+
+  input[type="text"], select {
+    @apply border p-2 rounded;
+  }
 }
