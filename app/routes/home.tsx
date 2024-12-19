@@ -32,6 +32,12 @@ export default function Home() {
         >
           Calculator
         </Link>
+        <Link
+          to="tasks"
+          className='underline cursor-pointer'
+        >
+          Task Mgmt
+        </Link>
       </div>
       <div>
         <Outlet />

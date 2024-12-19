@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import axios from 'axios';
+
+const url = "https://my-json-server.typicode.com/mehulchopradev/calc-service/defaultCalcData";
 
 export type CalcData = {
   firstNo: number;
@@ -13,7 +16,8 @@ type CalcFormProps = {
 
 export default function CalcForm(props: CalcFormProps) {
   const [ ans, setAns ] = useState<number>(0);
-  const calcDataRef = useRef<CalcData>({
+  const firstNoRef = useRef<HTMLInputElement>(null);
+  const [ calcData, setCalcData ] = useState<CalcData>({
     firstNo: 0,
     operator: '+',
     secondNo: 0
@@ -26,21 +30,45 @@ export default function CalcForm(props: CalcFormProps) {
     // they help react component to synchronize with the third party libraries/browser/network/apis/logging
     
     // side effect should run only on initial mount
-    document.getElementById('firstNo')!.focus();
+    // document.getElementById('firstNo')!.focus();
+    firstNoRef.current!.focus();
+
+    axios.get(url)
+      .then((response) => {
+        const data = response.data;
+        const { firstNo, secondNo, operation: operator } = data;
+        setCalcData({
+          firstNo,
+          operator,
+          secondNo
+        });
+        props.onCalcData({
+          firstNo,
+          operator,
+          secondNo
+        });
+      })
+      .catch((error) => console.error(error));
+    console.log('hi');
   }, []);
 
   const handleInput = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    calcDataRef.current = {
+    /* calcDataRef.current = {
       ...calcDataRef.current,
       [name]: name === 'operator' ? value : Number(value)
-    };
-    props.onCalcData(calcDataRef.current);
+    }; */
+    const newState = {
+      ...calcData,
+      [name]: name === 'operator' ? value : Number(value)
+    }
+    setCalcData(newState);
+    props.onCalcData(newState);
   }
 
   const handleCalculate = () => {
-    const { firstNo, operator, secondNo } = calcDataRef.current;
+    const { firstNo, operator, secondNo } = calcData;
     let result = 0;
     switch (operator) {
       case '+':
@@ -63,9 +91,10 @@ export default function CalcForm(props: CalcFormProps) {
         <input
           type="text"
           name="firstNo"
-          id="firstNo"
+          ref={firstNoRef}
           placeholder='First No'
           onChange={handleInput}
+          value={calcData.firstNo}
         />
         <select name="operator" onChange={handleInput}>
           <option value="+">+</option>
@@ -77,6 +106,7 @@ export default function CalcForm(props: CalcFormProps) {
           name="secondNo"
           placeholder='Second No'
           onChange={handleInput}
+          value={calcData.secondNo}
         />
       </div>
       <div className='flex'>

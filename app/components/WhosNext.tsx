@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
+import { useParams } from 'react-router';
 
 type Employee = {
   id: number,
   name: string;
 };
 
-const employees: Employee[] = [
+const employees1: Employee[] = [
   {
     id: 1,
     name: 'Amogh'
@@ -24,10 +25,28 @@ const employees: Employee[] = [
   }
 ];
 
+const employees2: Employee[] = [
+  {
+    id: 1,
+    name: 'John'
+  },
+  {
+    id: 2,
+    name: 'Jeff'
+  },
+];
+
+const departmentEmployees: Record<number, Employee[]> = {
+  1001: employees1,
+  1002: employees2,
+};
+
 export default function WhosNext() {
   const [ queue, setQueue ] = useState<Employee[]>([]);
+  const params = useParams<{ departmentId: string }>();
+  const departmentId = parseInt(params.departmentId || '1001', 10);
 
-  const employeesRef = useRef<Employee[]>([...employees]);
+  const employeesRef = useRef<Employee[]>([...departmentEmployees[departmentId]]);
 
   const handleNext = () => {
     const index = Math.floor(Math.random() * employeesRef.current.length);
@@ -41,7 +60,7 @@ export default function WhosNext() {
   };
 
   const handleRestart = () => {
-    employeesRef.current = [...employees];
+    employeesRef.current = [...departmentEmployees[departmentId]];
     setQueue([]);
   };
 
