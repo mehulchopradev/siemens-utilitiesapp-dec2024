@@ -1,4 +1,4 @@
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 
 export type CalcData = {
   firstNo: number;
@@ -18,6 +18,16 @@ export default function CalcForm(props: CalcFormProps) {
     operator: '+',
     secondNo: 0
   });
+
+  useEffect(() => {
+    // effect code
+    // side effect code
+    // they execute after the react component has rendered/re rendered itself
+    // they help react component to synchronize with the third party libraries/browser/network/apis/logging
+    
+    // side effect should run only on initial mount
+    document.getElementById('firstNo')!.focus();
+  }, []);
 
   const handleInput = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -52,7 +62,8 @@ export default function CalcForm(props: CalcFormProps) {
       <div className='flex gap-4'>
         <input
           type="text"
-          name="firstNo" 
+          name="firstNo"
+          id="firstNo"
           placeholder='First No'
           onChange={handleInput}
         />

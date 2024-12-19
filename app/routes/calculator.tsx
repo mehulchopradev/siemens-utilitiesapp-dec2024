@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CalcForm, { type CalcData } from '~/components/calculator/calc-form';
 import LiveExp from '~/components/calculator/live-exp';
+import { generateFibonacciSeries } from '~/utils/series';
 
 export default function Calculator() {
   const [ calcData, setCalcData ] = useState<CalcData>({
@@ -20,6 +21,14 @@ export default function Calculator() {
     setAns(ans);
   }
 
+  // heavy computation
+  const fiboSeries = useMemo(() => generateFibonacciSeries(ans), [ans]);
+  
+  // AVOID THIS!!!
+  /* useEffect(() => {
+    const fiboSeries = generateFibonacciSeries(ans);
+  }, [ans]); */
+
   return (
     <div className='flex flex-col items-center gap-4'>
       <h1>Calculator</h1>
@@ -31,6 +40,10 @@ export default function Calculator() {
         calcData={calcData}
         ans={ans}
       />
+      <div>
+        <h2>Fibonacci series</h2>
+        {fiboSeries.join(', ')}
+      </div>
     </div>
   );
 }
