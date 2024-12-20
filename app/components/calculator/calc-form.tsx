@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import axios from 'axios';
-
-const url = "https://my-json-server.typicode.com/mehulchopradev/calc-service/defaultCalcData";
+import CalculatorStore from '~/store/CalculatorStore';
+import { observer } from 'mobx-react-lite';
 
 export type CalcData = {
   firstNo: number;
@@ -10,18 +10,11 @@ export type CalcData = {
 }
 
 type CalcFormProps = {
-  onCalcData: (calcData: CalcData) => void;
-  onAns: (ans: number) => void;
+  calcStore: CalculatorStore;
 }
 
-export default function CalcForm(props: CalcFormProps) {
-  const [ ans, setAns ] = useState<number>(0);
+function CalcForm(props: CalcFormProps) {
   const firstNoRef = useRef<HTMLInputElement>(null);
-  const [ calcData, setCalcData ] = useState<CalcData>({
-    firstNo: 0,
-    operator: '+',
-    secondNo: 0
-  });
 
   useEffect(() => {
     // effect code
@@ -32,57 +25,17 @@ export default function CalcForm(props: CalcFormProps) {
     // side effect should run only on initial mount
     // document.getElementById('firstNo')!.focus();
     firstNoRef.current!.focus();
-
-    axios.get(url)
-      .then((response) => {
-        const data = response.data;
-        const { firstNo, secondNo, operation: operator } = data;
-        setCalcData({
-          firstNo,
-          operator,
-          secondNo
-        });
-        props.onCalcData({
-          firstNo,
-          operator,
-          secondNo
-        });
-      })
-      .catch((error) => console.error(error));
-    console.log('hi');
+    props.calcStore.fetchDefaultCalcData();
   }, []);
 
   const handleInput = (
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
-    /* calcDataRef.current = {
-      ...calcDataRef.current,
-      [name]: name === 'operator' ? value : Number(value)
-    }; */
-    const newState = {
-      ...calcData,
-      [name]: name === 'operator' ? value : Number(value)
-    }
-    setCalcData(newState);
-    props.onCalcData(newState);
+    props.calcStore.updateCalcData(name, value);
   }
 
   const handleCalculate = () => {
-    const { firstNo, operator, secondNo } = calcData;
-    let result = 0;
-    switch (operator) {
-      case '+':
-        result = firstNo + secondNo;
-        break;
-      case '-':
-        result = firstNo - secondNo;
-        break;
-      case '*':
-        result = firstNo * secondNo;
-        break;
-    }
-    setAns(result);
-    props.onAns(result);
+    props.calcStore.calculate();
   }
 
   return (
@@ -94,7 +47,7 @@ export default function CalcForm(props: CalcFormProps) {
           ref={firstNoRef}
           placeholder='First No'
           onChange={handleInput}
-          value={calcData.firstNo}
+          value={props.calcStore.firstNo}
         />
         <select name="operator" onChange={handleInput}>
           <option value="+">+</option>
@@ -106,7 +59,7 @@ export default function CalcForm(props: CalcFormProps) {
           name="secondNo"
           placeholder='Second No'
           onChange={handleInput}
-          value={calcData.secondNo}
+          defaultValue={props.calcStore.secondNo}
         />
       </div>
       <div className='flex'>
@@ -117,10 +70,12 @@ export default function CalcForm(props: CalcFormProps) {
           type="text"
           name="ans"
           placeholder='Answer'
-          value={ans}
+          value={props.calcStore.ans}
           readOnly
         />
       </div>
     </div>
   )
 }
+
+export default observer(CalcForm);

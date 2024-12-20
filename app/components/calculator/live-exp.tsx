@@ -1,19 +1,22 @@
-import type { CalcData } from './calc-form';
+import { observer } from 'mobx-react-lite';
+import CalculatorStore from '~/store/CalculatorStore';
 
 type LiveExpProps = {
-  calcData: CalcData;
-  ans: number;
+  calcStore: CalculatorStore;
 };
 
-export default function LiveExp(props: LiveExpProps) {
+function LiveExp(props: LiveExpProps) {
+  const { algebraicExp } = props.calcStore;
   return (
     <div className='flex flex-col gap-4 items-center'>
       <div>****************************</div>
       <h2>Live Algebraic Expression</h2>
       <div>
-        {`${props.calcData.firstNo} ${props.calcData.operator} ${props.calcData.secondNo} = ${props.ans}`}
+        {algebraicExp}
       </div>
       <div>****************************</div>
     </div>
   );
 }
+
+export default observer(LiveExp);

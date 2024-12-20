@@ -2,28 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import CalcForm, { type CalcData } from '~/components/calculator/calc-form';
 import LiveExp from '~/components/calculator/live-exp';
 import CustomVideoPlayer from '~/components/custom-video-player';
+import CalculatorStore from '~/store/CalculatorStore';
 import { generateFibonacciSeries } from '~/utils/series';
 
+const calcStore = new CalculatorStore();
+
 export default function Calculator() {
-  const [ calcData, setCalcData ] = useState<CalcData>({
-    firstNo: 0,
-    operator: '+',
-    secondNo: 0,
-  });
-  const [ ans, setAns ] = useState<number>(0);
-
-  const handleCalcData = (calcData: CalcData) => {
-    // console.log('parent', calcData);
-    setCalcData(calcData);
-  };
-
-  const handleAns = (ans: number) => {
-    // console.log('parent', ans);
-    setAns(ans);
-  }
 
   // heavy computation
-  const fiboSeries = useMemo(() => generateFibonacciSeries(ans), [ans]);
+  // const fiboSeries = useMemo(() => generateFibonacciSeries(ans), [ans]);
 
   // AVOID THIS!!!
   /* useEffect(() => {
@@ -34,20 +21,18 @@ export default function Calculator() {
     <div className='flex flex-col items-center gap-4'>
       <h1>Calculator</h1>
       <CalcForm
-        onCalcData={handleCalcData}
-        onAns={handleAns}
+        calcStore={calcStore}
       />
-      <CustomVideoPlayer
+      {/* <CustomVideoPlayer
         url='https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'
         isPlaying={ans === 13}
-      />
+      /> */}
       <LiveExp
-        calcData={calcData}
-        ans={ans}
+        calcStore={calcStore}
       />
       <div>
         <h2>Fibonacci series</h2>
-        {fiboSeries.join(', ')}
+        {/* fiboSeries.join(', ') */}
       </div>
     </div>
   );
