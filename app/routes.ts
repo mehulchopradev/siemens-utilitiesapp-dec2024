@@ -6,5 +6,6 @@ export default [
     route("whose-next/:departmentId", "routes/whose-next.tsx"),
     route("calc", "routes/calculator.tsx"),
     route("tasks", "routes/TaskApp.tsx"),
+    route("users", "routes/Users.tsx"),
   ]),
 ] satisfies RouteConfig;

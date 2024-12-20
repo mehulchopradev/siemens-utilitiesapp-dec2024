@@ -38,6 +38,12 @@ export default function Home() {
         >
           Task Mgmt
         </Link>
+        <Link
+          to="users"
+          className='underline cursor-pointer'
+        >
+          Users
+        </Link>
       </div>
       <div>
         <Outlet />
