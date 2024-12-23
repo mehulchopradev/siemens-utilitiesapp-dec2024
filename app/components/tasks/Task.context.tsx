@@ -1,4 +1,5 @@
-import { createContext, useState } from 'react';
+import { createContext } from 'react';
+import TaskStore from '~/store/Task.store';
 
 export type Task = {
   id: string,
@@ -7,13 +8,13 @@ export type Task = {
 }
 
 export type TaskContextType = {
-  tasks: Task[];
-  addTask: (newTask: string) => void;
-}
+  store: TaskStore;
+};
+
+const taskStore = new TaskStore(); // create the mobx store once
 
 export const TaskContext = createContext<TaskContextType>({
-  tasks: [],
-  addTask: () => {},
+  store: taskStore,
 });
 
 type TaskProviderProps = {
@@ -21,20 +22,8 @@ type TaskProviderProps = {
 };
 
 export default function TaskProvider(props: TaskProviderProps) {
-  const [ tasks, setTasks ] = useState<Task[]>([]);
-
-  const addTask = (newTask: string) => {
-    const task: Task = {
-      id: String(Date.now()),
-      name: newTask,
-      done: false,
-    };
-
-    setTasks([...tasks, task]);
-  }
-
   return (
-    <TaskContext.Provider value={{ tasks: tasks, addTask: addTask, }}>
+    <TaskContext.Provider value={{ store: taskStore }}>
       {props.children}
     </TaskContext.Provider>
   );

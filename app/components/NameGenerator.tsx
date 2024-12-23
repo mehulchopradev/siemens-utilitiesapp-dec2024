@@ -1,10 +1,42 @@
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useReducer, useState } from 'react';
 import { useImmer } from 'use-immer';
 
 type NameGeneratorType = {
   firstName: string,
   lastName: string;
 };
+
+type NameGenActionType = {
+  type: 'SET_FIRST_NAME' | 'SET_LAST_NAME',
+  payload: string;
+};
+
+function nameGenReducer(state: NameGeneratorType, action: NameGenActionType) {
+  console.log('old state', state);
+  console.log('action', action);
+
+  let newState: NameGeneratorType;
+  switch (action.type) {
+    case 'SET_FIRST_NAME':
+      newState = {
+        ...state,
+        firstName: action.payload,
+      };
+      break;
+    case 'SET_LAST_NAME':
+      newState = {
+        ...state,
+        lastName: action.payload,
+      };
+      break;
+    default:
+      newState = state;
+  }
+
+  console.log('newState', newState);
+
+  return newState;
+}
 
 export default function NameGenerator(props: NameGeneratorType) {
   // const [ firstName, setFirstName ] = useState<string>('');
@@ -15,28 +47,43 @@ export default function NameGenerator(props: NameGeneratorType) {
       lastName: '',
     }); */
 
-  const [ nameComponents, setNameComponents ] = 
+  const [ state, dispatch ] = useReducer(nameGenReducer, {
+    firstName: props.firstName,
+    lastName: props.lastName,
+  });
+
+
+  /* const [ nameComponents, setNameComponents ] = 
     useImmer<NameGeneratorType>({
       firstName: props.firstName,
       lastName: props.lastName,
-    });
+    }); */
 
   
   const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    if (name === 'firstName') {
+      // dispatch to the reducer function an action obj (SET_FIRST_NAME) with the value
+      dispatch({ type: 'SET_FIRST_NAME', payload: value });
+    } else {
+      // dispatch to the reducer function an action obj (SET_LAST_NAME) with the value
+      dispatch({ type: 'SET_LAST_NAME', payload: value });
+    }
     /* setNameComponents({
       ...nameComponents,
       [name]: value,
     }); */
-    const key = name as keyof NameGeneratorType;
+    /* const key = name as keyof NameGeneratorType;
     setNameComponents((draft) => {
       draft[key] = value;
-    });
+    }); */
   };
 
-  const fullName = 
+  /* const fullName = 
     `${nameComponents.firstName} ${nameComponents.lastName}`
-    .toUpperCase();
+    .toUpperCase(); */
+
+  const fullName = `${state.firstName} ${state.lastName}`.toUpperCase();
 
   return (
     <div>
@@ -47,7 +94,7 @@ export default function NameGenerator(props: NameGeneratorType) {
           placeholder='First name'
           onInput={handleInput}
           name="firstName"
-          defaultValue={props.firstName}
+          value={state.firstName}
         />
       </div>
       <div className="row">
@@ -56,7 +103,7 @@ export default function NameGenerator(props: NameGeneratorType) {
           placeholder='Last name'
           onInput={handleInput}
           name="lastName"
-          value={nameComponents.lastName}
+          value={state.lastName}
         />
       </div>
       <div className="row">

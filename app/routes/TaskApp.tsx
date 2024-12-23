@@ -1,3 +1,4 @@
+import ActionButtons from '~/components/tasks/ActionButtons';
 import AddTask from '~/components/tasks/AddTask';
 import TaskProvider from '~/components/tasks/Task.context';
 import TaskList from '~/components/tasks/TaskList';
@@ -9,7 +10,7 @@ export default function TaskApp() {
       <TaskProvider>
         <AddTask />
         <TaskList />
-        <button>Clear completed tasks</button>
+        <ActionButtons />
       </TaskProvider>
     </div>
   );

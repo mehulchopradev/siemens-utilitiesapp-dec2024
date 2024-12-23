@@ -1,7 +1,8 @@
 import { useContext, useState, type ChangeEvent } from 'react';
 import { TaskContext } from './Task.context';
+import { observer } from 'mobx-react-lite';
 
-export default function AddTask() {
+function AddTask() {
   const context = useContext(TaskContext)
   const [ newTask, setNewTask ] = useState<string>('');
 
@@ -10,7 +11,7 @@ export default function AddTask() {
   }
 
   const handleClick = () => {
-    context.addTask(newTask);
+    context.store.addTask(newTask);
     setNewTask('');
   }
 
@@ -30,3 +31,5 @@ export default function AddTask() {
     </div>
   );
 }
+
+export default observer(AddTask);
