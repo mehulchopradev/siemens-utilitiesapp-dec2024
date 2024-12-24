@@ -1,5 +1,14 @@
 import { type ChangeEvent, useReducer, useState } from 'react';
+import styled from 'styled-components';
 import { useImmer } from 'use-immer';
+
+const FullNameDiv = styled.div<{ $fullname: string}>`
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  background-color: ${(props) => props.$fullname.length > 0 ? '#f0f0f0' : 'white'};
+`;
 
 type NameGeneratorType = {
   firstName: string,
@@ -95,6 +104,7 @@ export default function NameGenerator(props: NameGeneratorType) {
           onInput={handleInput}
           name="firstName"
           value={state.firstName}
+          data-testid="firstName"
         />
       </div>
       <div className="row">
@@ -104,11 +114,12 @@ export default function NameGenerator(props: NameGeneratorType) {
           onInput={handleInput}
           name="lastName"
           value={state.lastName}
+          data-testid="lastName"
         />
       </div>
-      <div className="row">
-        <span>{fullName}</span>
-      </div>
+      <FullNameDiv $fullname={fullName.trim()}>
+        <span data-testid="fullName">{fullName}</span>
+      </FullNameDiv>
     </div>
   )
 }

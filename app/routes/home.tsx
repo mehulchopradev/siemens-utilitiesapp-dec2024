@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { Outlet, Link } from 'react-router';
+import { Nav } from '~/components/ui/Nav';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,7 +14,7 @@ export default function Home() {
   return (
     <div className='flex flex-col gap-4 items-center'>
       <h1 className='font-bold'>My utilities app</h1>
-      <div className='flex gap-4'>
+      <Nav>
         <Link
           to="name-gen"
           className='underline cursor-pointer'
@@ -44,7 +45,7 @@ export default function Home() {
         >
           Users
         </Link>
-      </div>
+      </Nav>
       <div>
         <Outlet />
       </div>
